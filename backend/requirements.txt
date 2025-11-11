@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+langgraph
+langchain
+pydantic
+websockets
+python-dotenv
+jupyter-client
+ipykernel
