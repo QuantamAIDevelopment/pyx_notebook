@@ -3,7 +3,7 @@ import sys
 import io
 from contextlib import redirect_stdout, redirect_stderr
 from typing import Dict, Any
-from models.database import get_db, Cell, Execution
+from src.models.database import get_db, Cell, Execution
 from datetime import datetime
 from jupyter_client import KernelManager
 import queue

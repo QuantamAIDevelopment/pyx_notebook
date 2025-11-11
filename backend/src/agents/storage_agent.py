@@ -1,5 +1,5 @@
 from typing import Dict, Any
-from models.database import get_db, Session, Notebook, Cell, User
+from src.models.database import get_db, Session, Notebook, Cell, User
 from datetime import datetime
 import uuid
 

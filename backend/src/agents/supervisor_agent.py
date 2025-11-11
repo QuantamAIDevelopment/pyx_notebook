@@ -1,8 +1,8 @@
 from langgraph.graph import StateGraph, END
 from typing import TypedDict, Literal, List, Dict, Any
-from agents.ui_agent import UIAgent
-from agents.execution_agent import ExecutionAgent
-from agents.storage_agent import StorageAgent
+from src.agents.ui_agent import UIAgent
+from src.agents.execution_agent import ExecutionAgent
+from src.agents.storage_agent import StorageAgent
 
 class AgentState(TypedDict):
     messages: List[Dict[str, Any]]

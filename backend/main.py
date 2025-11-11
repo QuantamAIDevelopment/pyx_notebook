@@ -5,8 +5,8 @@ from pydantic import BaseModel
 from typing import Dict, Any, List
 import json
 import asyncio
-from agents.supervisor_agent import SupervisorAgent
-from models.database import get_db
+from src.agents.supervisor_agent import SupervisorAgent
+from src.models.database import get_db
 
 app = FastAPI(title="Notebook Platform API")
 

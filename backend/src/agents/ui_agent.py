@@ -1,5 +1,5 @@
 from typing import Dict, Any
-from models.database import get_db, Cell, Notebook
+from src.models.database import get_db, Cell, Notebook
 from sqlalchemy.orm import Session
 
 class UIAgent:
