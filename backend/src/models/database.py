@@ -36,6 +36,7 @@ class Notebook(Base):
     title = Column(String, default="Untitled Notebook")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_saved = Column(Boolean, default=False)
     session = relationship("Session", back_populates="notebooks")
     cells = relationship("Cell", back_populates="notebook", order_by="Cell.order_index")
 

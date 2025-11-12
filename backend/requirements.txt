@@ -9,3 +9,4 @@ websockets
 python-dotenv
 jupyter-client
 ipykernel
+python-multipart

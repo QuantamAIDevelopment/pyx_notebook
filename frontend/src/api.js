@@ -61,3 +61,27 @@ export const deleteCell = async (sessionId, data) => {
   });
   return response.data;
 };
+
+export const listNotebooks = async () => {
+  const response = await api.get('/notebooks');
+  return response.data;
+};
+
+export const uploadFile = async (sessionId, file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await axios.post(`http://localhost:8000/api/upload/${sessionId}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
+};
+
+export const listFiles = async (sessionId) => {
+  const response = await api.get(`/files/${sessionId}`);
+  return response.data;
+};
+
+export const cleanupSession = async (sessionId) => {
+  const response = await api.delete(`/session/${sessionId}`);
+  return response.data;
+};

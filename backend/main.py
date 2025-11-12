@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -65,6 +65,36 @@ async def notebook_action(session_id: str, request: NotebookRequest):
 async def load_notebook(session_id: str):
     result = await supervisor.process_request(session_id, "load_notebook", {})
     return JSONResponse(content=result)
+
+@app.get("/api/notebooks")
+async def list_notebooks():
+    result = await supervisor.process_request("", "list_notebooks", {})
+    return JSONResponse(content=result)
+
+@app.post("/api/upload/{session_id}")
+async def upload_file(session_id: str, file: UploadFile = File(...)):
+    content = await file.read()
+    result = await supervisor.process_request(session_id, "upload_file", {
+        "filename": file.filename,
+        "content": content
+    })
+    return JSONResponse(content=result)
+
+@app.get("/api/files/{session_id}")
+async def list_files(session_id: str):
+    result = await supervisor.process_request(session_id, "list_files", {})
+    return JSONResponse(content=result)
+
+@app.delete("/api/session/{session_id}")
+async def cleanup_session(session_id: str):
+    result = await supervisor.process_request(session_id, "cleanup_session", {})
+    return JSONResponse(content=result)
+
+@app.get("/uploads/{session_id}/{filename}")
+async def get_file(session_id: str, filename: str):
+    from fastapi.responses import FileResponse
+    file_path = f"uploads/{session_id}/{filename}"
+    return FileResponse(file_path)
 
 @app.websocket("/ws/{session_id}")
 async def websocket_endpoint(websocket: WebSocket, session_id: str):

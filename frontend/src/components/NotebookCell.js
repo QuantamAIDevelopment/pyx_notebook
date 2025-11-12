@@ -97,94 +97,93 @@ const NotebookCell = ({ cell, sessionId, onUpdate, onDelete, index, onAddCell })
         </div>
 
         {/* Main cell content */}
-        <div className="flex-1 border border-gray-300 rounded-lg overflow-hidden bg-white">
-          <div className="relative">
-            <Editor
-              height="60px"
-              language={cell.cell_type === 'code' ? 'python' : 'markdown'}
-              value={cell.source || ''}
-              onChange={handleCodeChange}
-              onMount={(editor) => {
-                editorRef.current = editor;
-                
-                const updateHeight = () => {
-                  const contentHeight = Math.min(1000, Math.max(60, editor.getContentHeight()));
-                  const container = editor.getDomNode();
-                  if (container) {
-                    container.style.height = contentHeight + 'px';
-                  }
-                  editor.layout();
-                };
-                
-                editor.onDidContentSizeChange(updateHeight);
-                
-                // Ctrl+Enter: Run cell
-                editor.addCommand(2048 | 3, () => {
-                  handleRunCell();
-                  return null;
-                });
-                
-                // Shift+Enter: Run and add cell
-                editor.addCommand(1024 | 3, () => {
-                  handleRunAndAddCell();
-                  return null;
-                });
-                
-                updateHeight();
-                setTimeout(() => {
-                  editor.focus();
+        <div className="flex-1">
+          <div className="border border-gray-300 rounded-lg overflow-hidden bg-white">
+            <div className="relative">
+              <Editor
+                height="auto"
+                language={cell.cell_type === 'code' ? 'python' : 'markdown'}
+                value={cell.source || ''}
+                onChange={handleCodeChange}
+                onMount={(editor) => {
+                  editorRef.current = editor;
+                  
+                  const updateHeight = () => {
+                    const contentHeight = editor.getContentHeight();
+                    const container = editor.getDomNode();
+                    if (container) {
+                      container.style.height = contentHeight + 'px';
+                    }
+                    editor.layout();
+                  };
+                  
+                  editor.onDidContentSizeChange(updateHeight);
+                  
+                  // Ctrl+Enter: Run cell
+                  editor.addCommand(2048 | 3, () => {
+                    handleRunCell();
+                    return null;
+                  });
+                  
+                  // Shift+Enter: Run and add cell
+                  editor.addCommand(1024 | 3, () => {
+                    handleRunAndAddCell();
+                    return null;
+                  });
+                  
                   updateHeight();
-                }, 100);
-              }}
-              options={{
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                fontSize: 14,
-                lineNumbers: 'off',
-                folding: false,
-                padding: { top: 12, bottom: 12 },
-                automaticLayout: true,
-                wordWrap: 'on',
-                readOnly: false,
-                scrollbar: { 
-                  vertical: 'auto',
-                  horizontal: 'auto'
-                }
-              }}
-            />
-          </div>
+                  setTimeout(updateHeight, 100);
+                }}
+                options={{
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  fontSize: 14,
+                  lineNumbers: 'off',
+                  folding: false,
+                  padding: { top: 12, bottom: 12 },
+                  automaticLayout: true,
+                  wordWrap: 'on',
+                  readOnly: false,
+                  scrollbar: { 
+                    vertical: 'hidden',
+                    horizontal: 'hidden'
+                  }
+                }}
+              />
+            </div>
 
-          {showInputPrompt && (
-            <div className="border-t p-4 bg-blue-50">
-              <div className="flex items-start space-x-2">
-                <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Input required (one value per line):
-                  </label>
-                  <textarea
-                    value={userInput}
-                    onChange={(e) => setUserInput(e.target.value)}
-                    placeholder="Enter input values..."
-                    className="w-full p-3 border border-gray-300 rounded-md text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    rows="2"
-                    autoFocus
-                  />
-                  <button
-                    onClick={handleRunCell}
-                    className="mt-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
-                  >
-                    Submit & Run
-                  </button>
+            {showInputPrompt && (
+              <div className="border-t p-4 bg-blue-50">
+                <div className="flex items-start space-x-2">
+                  <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Input required (one value per line):
+                    </label>
+                    <textarea
+                      value={userInput}
+                      onChange={(e) => setUserInput(e.target.value)}
+                      placeholder="Enter input values..."
+                      className="w-full p-3 border border-gray-300 rounded-md text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      rows="2"
+                      autoFocus
+                    />
+                    <button
+                      onClick={handleRunCell}
+                      className="mt-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      Submit & Run
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {cell.output && (
-            <div className="border-t bg-gray-50 p-4">
+            <div className="mt-2 border border-gray-300 rounded-lg bg-gray-50 p-4">
               <pre className="text-sm text-gray-900 whitespace-pre-wrap font-mono leading-relaxed">
                 {cell.output}
               </pre>

@@ -3,6 +3,7 @@ from typing import TypedDict, Literal, List, Dict, Any
 from src.agents.ui_agent import UIAgent
 from src.agents.execution_agent import ExecutionAgent
 from src.agents.storage_agent import StorageAgent
+from src.agents.file_agent import FileAgent
 
 class AgentState(TypedDict):
     messages: List[Dict[str, Any]]
@@ -19,6 +20,7 @@ class SupervisorAgent:
         self.ui_agent = UIAgent()
         self.execution_agent = _execution_agent
         self.storage_agent = StorageAgent()
+        self.file_agent = FileAgent()
         self.graph = self._build_graph()
     
     def _build_graph(self):
@@ -28,6 +30,7 @@ class SupervisorAgent:
         workflow.add_node("ui_agent", self.ui_agent.process)
         workflow.add_node("execution_agent", self.execution_agent.process)
         workflow.add_node("storage_agent", self.storage_agent.process)
+        workflow.add_node("file_agent", self.file_agent.process)
         
         workflow.set_entry_point("supervisor")
         
@@ -38,6 +41,7 @@ class SupervisorAgent:
                 "ui": "ui_agent",
                 "execute": "execution_agent", 
                 "storage": "storage_agent",
+                "file": "file_agent",
                 "end": END
             }
         )
@@ -45,6 +49,7 @@ class SupervisorAgent:
         workflow.add_edge("ui_agent", END)
         workflow.add_edge("execution_agent", END)
         workflow.add_edge("storage_agent", END)
+        workflow.add_edge("file_agent", END)
         
         return workflow.compile()
     
@@ -52,15 +57,17 @@ class SupervisorAgent:
         action = state.get("action", "")
         return state
     
-    def route_request(self, state: AgentState) -> Literal["ui", "execute", "storage", "end"]:
+    def route_request(self, state: AgentState) -> Literal["ui", "execute", "storage", "file", "end"]:
         action = state.get("action", "")
         
         if action in ["create_cell", "delete_cell", "update_cell"]:
             return "ui"
         elif action in ["run_cell", "run_all"]:
             return "execute"
-        elif action in ["save_notebook", "load_notebook", "create_session"]:
+        elif action in ["save_notebook", "load_notebook", "create_session", "list_notebooks"]:
             return "storage"
+        elif action in ["upload_file", "list_files", "cleanup_session"]:
+            return "file"
         else:
             return "end"
     

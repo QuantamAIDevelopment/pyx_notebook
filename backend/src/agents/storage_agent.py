@@ -15,6 +15,8 @@ class StorageAgent:
             result = self._save_notebook(data, session_id)
         elif action == "load_notebook":
             result = self._load_notebook(session_id)
+        elif action == "list_notebooks":
+            result = self._list_notebooks()
         else:
             result = {"error": "Unknown storage action"}
         
@@ -76,6 +78,7 @@ class StorageAgent:
             
             notebook.title = data.get("title", notebook.title)
             notebook.updated_at = datetime.utcnow()
+            notebook.is_saved = True
             
             # Update cells if provided
             cells_data = data.get("cells", [])
@@ -119,5 +122,20 @@ class StorageAgent:
                     "cells": cells_data
                 }
             }
+        finally:
+            db.close()
+    
+    def _list_notebooks(self) -> Dict[str, Any]:
+        db = next(get_db())
+        try:
+            notebooks = db.query(Notebook).filter(Notebook.is_saved == True).order_by(Notebook.updated_at.desc()).all()
+            notebooks_data = [{
+                "id": nb.id,
+                "session_id": nb.session_id,
+                "title": nb.title,
+                "created_at": nb.created_at.isoformat(),
+                "updated_at": nb.updated_at.isoformat()
+            } for nb in notebooks]
+            return {"notebooks": notebooks_data}
         finally:
             db.close()
