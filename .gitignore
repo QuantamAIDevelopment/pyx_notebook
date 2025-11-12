@@ -48,6 +48,10 @@ Thumbs.db
 *.log
 logs/
 
+# Uploads
+uploads/
+upload/
+
 # Docker
 docker-compose.override.yml
 
