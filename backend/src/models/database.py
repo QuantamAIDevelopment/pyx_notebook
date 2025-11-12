@@ -3,12 +3,19 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 import os
+from urllib.parse import quote_plus
 from dotenv import load_dotenv
 
 load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@localhost/notebook_db")
 
-engine = create_engine(DATABASE_URL)
+db_host = os.getenv("DATABASE_HOST", "localhost")
+db_port = os.getenv("DATABASE_PORT", "5432")
+db_name = os.getenv("DATABASE_NAME", "notebook_db")
+db_user = os.getenv("DATABASE_USER", "user")
+db_password = quote_plus(os.getenv("DATABASE_PASSWORD", "password"))
+db_url = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+
+engine = create_engine(db_url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
